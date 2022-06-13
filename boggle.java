@@ -51,6 +51,7 @@ public class boggle {
         char[][] boggleBoard  = newBoard(diceBoard);
 
         printBoard(boggleBoard);
+        System.out.println("hii");
 
     }
 }
