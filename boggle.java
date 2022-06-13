@@ -1,10 +1,11 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
 public class boggle {
     static Random random = new Random();
-
+    static ArrayList<String> wordList = new ArrayList<>();
     public static char[][][] fillDiceBoard(char[][][] diceBoard, String[][] diceArray) {
         for (int rowNum = 0; rowNum < 5; rowNum++) {
             for (int colNum = 0; colNum < 5; colNum++) {
@@ -31,8 +32,25 @@ public class boggle {
         return boggleBoard;
     }
 
+    public static boolean isPassable(char[][] boggleBoard, int rowNum, int colNum){
+
+        if(rowNum >= boggleBoard[0].length || rowNum == -1 || colNum == -1 || colNum >= boggleBoard[0].length || ){
+            return true;
+        }
+
+        return false;
+    }
+    public static int DFS(){
+        char[][] neighbors = new char[1][1];
+
+
+        return -1;
+    }
+
+
+
+
     public static ArrayList<String>  findWords(char[][] boggleBoard){
-        ArrayList<String> wordList = new ArrayList<>();
 
 
         return wordList;
@@ -45,13 +63,12 @@ public class boggle {
     public static void main(String[] args){
         String[][] diceArray = {{"AAAFRS", "AAEEEE", "AAFIRS" , "ADENNN", "AEEEEM"},{"AEEGMU" , "AEGMNN" , "AFIRSY" , "BJKQXZ" , "CCNSTW"} , {"CEIILT" , "CEILPT" , "CEIPST" , "DDLNOR" , "DHHLOR"} , {"DHHNOT" , "DHLNOR" , "EIIITT" , "EMOTTT" , "ENSSSU" }, {"FIPRSY" , "GORRVW" , "HIPRRY" , "NOOTUW" , "OOOTTU"}};
         char[][][] diceBoard = new char[5][5][6];
+
         fillDiceBoard(diceBoard, diceArray);
-
-
-        char[][] boggleBoard  = newBoard(diceBoard);
-
+        char[][] boggleBoard = newBoard(diceBoard);
         printBoard(boggleBoard);
         System.out.println("hii");
+
 
     }
 }
