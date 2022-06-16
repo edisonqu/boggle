@@ -3,9 +3,11 @@ import java.io.FileNotFoundException;
 import java.lang.reflect.Array;
 import java.util.*;
 
+
 public class boggle {
     static Random random = new Random();
-    static ArrayList<String> wordList = new ArrayList<>();
+    static HashSet<String> wordList = new HashSet<>();
+    static HashSet<String> prefixes = new HashSet<>();
 
     public static char[][][] fillDiceBoard(char[][][] diceBoard, String[][] diceArray) {
         for (int rowNum = 0; rowNum < 5; rowNum++) {
@@ -37,42 +39,65 @@ public class boggle {
         }
         return true;
     }
-    public static ArrayList<Character> findNeighbors(char[][] boggleBoard, int rowNum, int colNum){
-        ArrayList<Character> neighbors = new ArrayList<Character>();
-        for(int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-                if (i == 0 && j == 0) {
-                    continue;
-                }
-                if (isPassable(boggleBoard, rowNum + i, colNum + j)) {
-                    neighbors.add(boggleBoard[rowNum + i][rowNum + j]);
-                }
-            }
-        }
-        System.out.println(boggleBoard[rowNum][colNum]);
-        return neighbors;
-    }
+//    public static ArrayList<Character> findNeighbors(char[][] boggleBoard, int rowNum, int colNum){
+//        ArrayList<Character> neighbors = new ArrayList<Character>();
+//        for(int i = -1; i <= 1; i++) {
+//            for (int j = -1; j <= 1; j++) {
+//                if (i == 0 && j == 0) {
+//                    continue;
+//                }
+//                if (isPassable(boggleBoard, rowNum + i, colNum + j)) {
+//                    neighbors.add(boggleBoard[rowNum + i][rowNum + j]);
+//                }
+//            }
+//        }
+//        System.out.println(boggleBoard[rowNum][colNum]);
+//        return neighbors;
+//    }
     public static HashSet<String> dictionaryWords() throws FileNotFoundException {
         HashSet<String> dictionaryList = new HashSet<>();
         File file = new File("dictionary.txt");
+        int max = 0;
         Scanner reader = new Scanner(file);
         while (reader.hasNextLine()) {
             String words = reader.nextLine();
             dictionaryList.add(words);
+            String wordPrefix = "";
+            for (int charIndex = 0; charIndex < words.length(); charIndex++) {
+                wordPrefix += String.valueOf(words.charAt(charIndex));
+                prefixes.add(wordPrefix);
+            }
         }
+
         reader.close();
         return dictionaryList;
     }
-    public static int DFS(char[][] boggleBoard, int rowNum, int colNum) {
-        ArrayList<Character> neighbors = findNeighbors(boggleBoard,rowNum,colNum);
-        System.out.println(neighbors);
+    // public static String findWords(char[][] boggleBoard, int rowNum, int colNum, HashSet<String> dictionaryWords, String letters, ArrayList<Character> neighbors) {
+    public static void findWords(char[][] boggleBoard, int rowNum, int colNum, HashSet<String> dictionaryWords, String letters) {
+        if(dictionaryWords.contains(letters)){
+            wordList.add(letters);
+        }
 
-        return -1;
-    }
-    public static ArrayList<String>  findWords(char[][] boggleBoard){
 
-        return wordList;
+        if (!prefixes.contains(letters) && !Objects.equals(letters, "")){
+            return;
+        }
+
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                if (dx == 0 && dy == 0) {
+                    continue;
+                }
+                if (!isPassable(boggleBoard, rowNum + dx, colNum + dy)) {
+                    continue;
+                }
+                letters += boggleBoard[rowNum+dx][colNum+dy];
+                findWords(boggleBoard, rowNum + dx, colNum + dy, dictionaryWords, letters);
+            }
+        }
+
     }
+
 
     public static void printBoard(char[][] boggleBoard){
         System.out.println(Arrays.deepToString(boggleBoard).replace("], ", "]\n"));
@@ -84,7 +109,11 @@ public class boggle {
         fillDiceBoard(diceBoard, diceArray);
         char[][] boggleBoard = newBoard(diceBoard);
         printBoard(boggleBoard);
-        DFS(boggleBoard, 0,0);
-
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                findWords(boggleBoard, 0,0, dictionaryWords(), "");
+            }
+        }
+        System.out.println(wordList);
     }
 }
