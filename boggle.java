@@ -10,6 +10,7 @@ public class boggle {
     static Random random = new Random();
     static HashSet<String> wordList = new HashSet<>();
     static HashSet<String> prefixes = new HashSet<>();
+    static boolean[][] visitedArray = new boolean[5][5];
 
     public static char[][][] fillDiceBoard(char[][][] diceBoard) {
         String[][] diceArray = {{"AAAFRS", "AAEEEE", "AAFIRS" , "ADENNN", "AEEEEM"},{"AEEGMU" , "AEGMNN" , "AFIRSY" , "BJKQXZ" , "CCNSTW"} , {"CEIILT" , "CEILPT" , "CEIPST" , "DDLNOR" , "DHHLOR"} , {"DHHNOT" , "DHLNOR" , "EIIITT" , "EMOTTT" , "ENSSSU" }, {"FIPRSY" , "GORRVW" , "HIPRRY" , "NOOTUW" , "OOOTTU"}};
@@ -53,28 +54,26 @@ public class boggle {
                 wordPrefix += String.valueOf(words.charAt(charIndex));
                 prefixes.add(wordPrefix);
             }
+
         }
 
         reader.close();
         return dictionaryList;
     }
     public static void findWords(char[][] boggleBoard, int rowNum, int colNum, HashSet<String> dictionaryWords, String letters) {
-//        if(visitedArray[rowNum][colNum]){
-//            return;
-//        }
+        if(visitedArray[rowNum][colNum]){
+            return;
+        }
+        visitedArray[rowNum][colNum] = true;
         if(dictionaryWords.contains(letters) && letters.length() >=3){
             wordList.add(letters);
         }
+
         if (!prefixes.contains(letters)) {
+            visitedArray[rowNum][colNum] = false;
             return;
         }
 
-//        for (int i = 0; i < visitedArray.length; i++) {
-//            for (int j = 0; j < visitedArray.length; j++) {
-//                visitedArray[i][j] = false;
-//            }
-//
-//        }
         for (int dx = -1; dx <= 1; dx++) {
             for (int dy = -1; dy <= 1; dy++) {
                 if (dx == 0 && dy == 0) {
@@ -84,23 +83,32 @@ public class boggle {
                     continue;
                 }
                 String newLetters = letters + Character.toLowerCase(boggleBoard[rowNum+dx][colNum+dy]);
-//                visitedArray[rowNum+dx][colNum+dy] = true;
                 findWords(boggleBoard, rowNum + dx, colNum + dy, dictionaryWords, newLetters);
-            }
-        }
 
+            }
+        }visitedArray[rowNum][colNum] = false;
     }
     public static void printBoard(char[][] boggleBoard){
         System.out.println(Arrays.deepToString(boggleBoard).replace("], ", "]\n"));
     }
-
     public static void play(){
+        // if multi player
+        //  if timer hits 0 or pass is pressed
+        //      next turn
+        //      reset timer
+        //  if valid turn
+        //      add points to the static variable player1score
+        //      next turn
+        //      reset timer
+
 
     }
     public static void main(String[] args) throws FileNotFoundException {
         char[][][] diceBoard = new char[5][5][6];
         fillDiceBoard(diceBoard);
+
         char[][] boggleBoard = newBoard(diceBoard);
+
         printBoard(boggleBoard);
 
         for (int i = 0; i < 5; i++) {
@@ -109,9 +117,10 @@ public class boggle {
             }
         }
 
-
         System.out.println(wordList);
         System.out.println(wordList.size());
+
+        System.out.println();
 
     }
 
